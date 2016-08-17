@@ -37,7 +37,7 @@ case $key in
     shift
     ;;
     -h|--help)
-    echo "Usage: deploy -p package.tgz -ho host1.place host2.place -i"
+    echo "Usage: deploy -p package.tgz -ho username@host1.place username@host2.place -i"
     echo
     echo "Possible arguments:"
     echo "-p, --package: .tgz package to deploy"
@@ -70,7 +70,7 @@ fi
 
 for host in "${destination_hosts[@]}"
 do
-  command="scp ${PACKAGE_DIR}/${SOURCE_FILE} pryormic@${host}:~/packages"
+  command="scp ${PACKAGE_DIR}/${SOURCE_FILE} ${host}:~/packages"
   echo $command
   $command
 
