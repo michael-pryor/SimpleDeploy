@@ -120,9 +120,32 @@ stop)
        echoEx "$(echoPrefix STOP) not running, no action taken"
        exit 0
    fi
- 
-   pkill -9 -f "${JOB}"
-   echoEx "$(echoPrefix STOP) success"
+
+   # First try to terminate gracefully.
+   pkill -f "${JOB}"
+
+   # Wait for a while for termination to complete.
+   for ((n=0;n<5;n++))
+   do
+       if isRunning
+       then
+          sleepTime=$[(n*2)+1]
+
+          if [ $n -ne 0 ];
+          then
+              echoEx "$(echoPrefix STOP) process still running, sleeping for $sleepTime seconds"
+          fi
+
+          sleep $sleepTime
+       fi
+   done
+
+   # We've waited long enough, force kill now.
+   if isRunning
+   then
+       echoEx "$(echoPrefix STOP) force killing process"
+       pkill -9 -f "${JOB}"
+   fi
 ;;
 
 start)
